@@ -27,16 +27,26 @@ export const Pointer = (props: ModelNodes) => {
     if (ref.current) {
       ref.current.position.set(x, y, 0);
       console.log('ok')
-      // 更新相机位置，使其基于鼠标位置轻微移动
+      // // 更新相机位置，使其基于鼠标位置轻微移动
       const cameraX = -pointer.x * 2; // 水平方向上的移动
       const cameraY = -pointer.y * 1; // 垂直方向上的移动
       const cameraZ = 5; // 维持相机在Z轴的位置，保持一定的视距
-      camera.position.lerp(new Vector3(cameraX, cameraY, cameraZ), 0.1);
+      camera.position.lerp(new Vector3(cameraX, cameraY, cameraZ), 0.3);
       camera.lookAt(new Vector3(0, 0, 0));
     }
 
   });
-  return (
+  return (<group>
+    {/* <OrthographicCamera
+      makeDefault
+      position={[0, 0, 5]}
+      left={-viewport.width / 2}
+      right={viewport.width / 2}
+      top={viewport.height / 2}
+      bottom={-viewport.height / 2}
+      near={0.1}
+      far={100}
+    /> */}
     <group {...props} dispose={null}
       ref={ref}
       scale={5}
@@ -45,6 +55,7 @@ export const Pointer = (props: ModelNodes) => {
     >
       <mesh geometry={nodes.group2098783903.geometry} material={materials.mat16} />
     </group>
+  </group>
   )
 }
 
