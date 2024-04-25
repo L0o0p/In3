@@ -19,8 +19,9 @@ export default function App() {
       {/* Container for the HTML view */}
       <div
         style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden' }}
-        // ref={domContent}
+      // ref={domContent}
       ></div>
+
       <Canvas
         shadows
         flat
@@ -30,7 +31,12 @@ export default function App() {
         eventSource={container}// 解决手指活动范围限制在手机屏幕的问题
         eventPrefix="page"
       >
+        {/* 接受投影 */}
+        <directionalLight castShadow intensity={0.4} position={[-10, 50, 300]} shadow-mapSize={[512, 512]} shadow-bias={-0.002}>
+          <orthographicCamera attach="shadow-camera" args={[-2000, 2000, 2000, -2000, -10000, 10000]} />
+        </directionalLight>
         {/* <OrbitControls /> */}
+        <hemisphereLight intensity={0.5} color="#eaeaea" position={[0, 1, 0]} />
         <ambientLight intensity={0.5} />
         <spotLight intensity={0.6} position={[20, 10, 10]} angle={0.2} penumbra={1} shadow-mapSize-width={2048} shadow-mapSize-height={2048} castShadow />
         <OrthographicCamera

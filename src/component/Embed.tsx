@@ -43,7 +43,8 @@ export default function Example() {
                 Log in
               </a>
               <a
-                href="#"
+                onClick={() => console.log('sadfas')}
+                href="https://www.baidu.com/"
                 className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700">
                 Start free trial
               </a>
@@ -135,7 +136,10 @@ export default function Example() {
                         </div>
                         <div className="mt-0 ml-3">
                           <button
-                            onClick={() => { console.log('start free trial') }}
+                            onClick={() => {
+                              console.log('start free trial');
+                              window.open('https://www.baidu.com', '_blank');
+                            }}
                             type="submit"
                             className="block w-full py-3 px-4 rounded-md shadow bg-indigo-500 text-white font-medium hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-300 focus:ring-offset-gray-900">
                             Start free trial
