@@ -156,6 +156,11 @@ body {
     justify-content: center;
 }
 
+textarea:enabled {
+    outline: none;
+    background-color: #F2F2F2 !important;
+}
+
 .generateButton {
     display: flex;
     width: 345px;
