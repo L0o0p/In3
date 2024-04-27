@@ -126,6 +126,11 @@ body {
     /* background-color: red; */
 }
 
+.preview>* {
+    height: 100%;
+    border-radius: 70px;
+}
+
 .contentBottom {
     width: 100%;
     flex-shrink: 0;

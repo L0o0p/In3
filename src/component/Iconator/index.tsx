@@ -1,7 +1,59 @@
 import './index.css'
-
+import React, { useEffect, useState } from 'react';
+import { useSocketIO } from './useOpenGenerate/useSocketIO'; // 确保路径正确
+import { postGenerate } from './useOpenGenerate';
 
 export const Iconator = () => {
+    const { socket } = useSocketIO();
+    const [prompt, setPrompt] = useState('')
+    const premise = 'Icon, app icon, flat, iOS style, not realist, cartoon, simple,minimalism'
+    const [data, setData] = useState<{
+        data: Uint8Array, headers: {
+            imageID: string,
+            pipelineID: string,
+            progress: string,
+            taskID: string,
+            type: string,
+            tempUrl?: string
+        }
+    } | null>(null);
+
+    const [url, setUrl] = useState<string | null>(null);
+    useEffect(() => {
+
+        const handlePayload = (payload: any) => {
+            // console.log(1);
+            setData(payload)
+            // console.log(payload);
+
+            const arrayBufferView = new Uint8Array(payload.data);
+            const blob = new Blob([arrayBufferView], { type: 'image/webp' });
+            const urlCreator = window.URL || window.webkitURL;
+            const url = urlCreator.createObjectURL(blob);
+            setUrl((oldurl) => {
+                if (oldurl) {
+                    urlCreator.revokeObjectURL(oldurl)
+                }
+                return url
+            })
+        }
+        socket?.on('progress', handlePayload)
+
+        socket?.on('finish', (payload: any) => {
+            handlePayload(payload)
+            // do sth when fin
+        })
+    }, [socket])
+    const onButtonClick = () => {
+        postGenerate({ prompt, premise })
+            .catch(error => {
+                console.error('请求失败:', error);
+                // 可以设置一个状态来显示错误信息
+            });
+
+        // 确保socket已连接
+        console.log('clicked the genbutton', prompt, premise, data)
+    }
 
     return (
         <div className='bg'>
@@ -45,7 +97,6 @@ export const Iconator = () => {
                         </div>
                     </div>
                 </div>
-
             </div>
             <div className='content'>
                 <div className='contentTop'>
@@ -74,26 +125,30 @@ export const Iconator = () => {
                         </div>
                     </div>
                     <div className='preview'>
-                        <img src={'https://telegraph-image-3k8.pages.dev/file/928a3b2569d791f7e650d.png'} alt="Preview" />
+                        <img src={url || 'https://telegraph-image-3k8.pages.dev/file/928a3b2569d791f7e650d.png'} alt="Preview" />
                     </div>
                 </div>
                 <div className='contentBottom'>
                     <div className='promptInput'>
-                        {/* <textarea >
-                            It was a dark and stormy night...
-                        </textarea> */}
                         <input
                             type="text"
                             placeholder="Type your prompt"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
                             style={{
                                 width: '290px',
                                 height: '200px',
                                 backgroundColor: '#F2F2F2',
                                 // opacity: 0
                             }}
-                        />
+                        >
+                        </input>
                     </div>
-                    <div className='generateButton'>
+                    <div
+                        className='generateButton'
+                        onClick={() => {/* 这里可以添加触发图片生成的代码，比如发送一个请求到服务器 */ onButtonClick() }}
+                        style={{ cursor: 'pointer !important' }}
+                    >
                         <div className='generateText'>
                             Generate
                         </div>
@@ -105,5 +160,13 @@ export const Iconator = () => {
 
             </div>
         </div >
+        // <iframe
+        //     style={{
+        //         maxWidth: ' 100rem',
+        //         height: '820px'
+        //     }}
+        //     src='https://iconator.cytelab.net/#/'
+        // />
     )
 }
+
