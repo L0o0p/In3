@@ -1,5 +1,5 @@
 import './index.css'
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSocketIO } from './useOpenGenerate/useSocketIO'; // 确保路径正确
 import { postGenerate } from './useOpenGenerate';
 import Clock from '../Time';
@@ -146,8 +146,9 @@ export const Iconator = () => {
                                 paddingTop: '4px',
                                 paddingBottom: '4px',
                                 paddingLeft: '1px',
-                                paddingRight: '1px'
+                                paddingRight: '1px',
                                 // opacity: 0
+                                resize: 'none'
                             }}
                         >
                         </textarea>

@@ -9,7 +9,7 @@ body {
     overflow: hidden;
     background-color: #fff;
     /* width: 393px; */
-    max-width: 80rem;
+    max-width: 40rem;
     height: 820px;
     flex-shrink: 0;
 }
@@ -128,7 +128,7 @@ body {
 
 .preview>* {
     height: 100%;
-    border-radius: 70px;
+    border-radius: 25%;
 }
 
 .contentBottom {

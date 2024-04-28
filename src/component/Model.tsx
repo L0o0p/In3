@@ -5,7 +5,6 @@ import { Html, Mask, useMask, Clone, Float as FloatImpl } from '@react-three/dre
 import useSpline from '@splinetool/r3f-spline'
 import { useLayoutEffect, useRef, useState } from 'react'
 // import { Clone, Html, Mask, useMask } from '@react-three/drei'
-import Embed from './Embed'
 import { useFrame } from '@react-three/fiber'
 import { Iconator } from './Iconator'
 // import Embed from './Embed'
@@ -13,12 +12,12 @@ import { Iconator } from './Iconator'
 
 // 三维内容整合
 export const Model = ({ ...props }) => {
-    let timeout = null
+    let timeout: ReturnType<typeof setTimeout> | undefined;
     const v = new THREE.Vector3()// 
     const wheel = useRef(0)
-    const hand = useRef()
+    const hand = useRef<THREE.Group<THREE.Object3DEventMap> | null>(null);
     const [clicked, click] = useState(false)
-    const { nodes, materials } = useSpline('scroll.splinecode')
+    const { nodes } = useSpline('scroll.splinecode')
     // Take the stencil and drop it over everything but the right hand
     const stencil = useMask(1, true)
 
@@ -42,8 +41,10 @@ export const Model = ({ ...props }) => {
     useFrame((state) => {
         v.copy({ x: state.pointer.x, y: state.pointer.y, z: 0 })
         v.unproject(state.camera)
-        hand.current.rotation.x = THREE.MathUtils.lerp(hand.current.rotation.x, clicked ? -0.7 : -0.5, 0.2)
-        hand.current.position.lerp({ x: v.x - 100, y: wheel.current + v.y, z: v.z }, 0.4)
+        if (hand.current) {
+            hand.current.rotation.x = THREE.MathUtils.lerp(hand.current.rotation.x, clicked ? -0.7 : -0.5, 0.2)
+            hand.current.position.lerp({ x: v.x - 100, y: wheel.current + v.y, z: v.z }, 0.4)
+        }
         state.camera.zoom = THREE.MathUtils.lerp(state.camera.zoom, clicked ? 0.9 : 0.7, clicked ? 0.025 : 0.15)
         state.camera.position.lerp({ x: -state.pointer.x * 400, y: -state.pointer.y * 200, z: 1000 }, 0.1)
         state.camera.lookAt(0, 0, 0)
@@ -106,12 +107,18 @@ export const Model = ({ ...props }) => {
                                 timeout = setTimeout(() => (wheel.current = 0), 100)
                             }}
                             onPointerDown={(e) => {
-                                e.target.setPointerCapture(e.pointerId)
-                                click(true)
+                                const target = e.target as HTMLElement; // 断言为 HTMLElement
+                                if (target) {
+                                    target.setPointerCapture(e.pointerId)
+                                    click(true)
+                                }
                             }}
                             onPointerUp={(e) => {
-                                e.target.releasePointerCapture(e.pointerId)
-                                click(false)
+                                const target = e.target as HTMLElement; // 断言为 HTMLElement
+                                if (target) {
+                                    target.releasePointerCapture(e.pointerId)
+                                    click(false)
+                                }
                             }}
                             receiveShadow
                             geometry={nodes.screen.geometry}>
@@ -124,7 +131,14 @@ export const Model = ({ ...props }) => {
     )
 }
 
-const Float = ({ object, intensity = 300, rotation = 1, ...props }) => (
+
+interface FloatProps {
+    object: THREE.Object3D | THREE.Object3D[];  // 明确指定类型
+    intensity?: number;
+    rotation?: number;
+}
+
+const Float = ({ object, intensity = 300, rotation = 1, ...props }: FloatProps) => (
     <FloatImpl floatIntensity={intensity} rotationIntensity={rotation} speed={2}>
         <Clone object={object} {...props} />
     </FloatImpl>
