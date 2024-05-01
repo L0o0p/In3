@@ -2,7 +2,7 @@ import './index.css'
 import { useEffect, useState } from 'react';
 import { useSocketIO } from './useOpenGenerate/useSocketIO'; // 确保路径正确
 import { postGenerate } from './useOpenGenerate';
-import Clock from '../Time';
+import Clock from './Time';
 
 export const Iconator = () => {
     const { socket } = useSocketIO();

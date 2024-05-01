@@ -173,7 +173,13 @@ textarea:enabled {
 }
 
 .generateButton:hover {
-    background: #1c1c1c;
+    /* background: #494949;*/
+    background: #494949;
+}
+
+.generateButton:active {
+    background: #264753;
+    /* border: #c0fcff solid 2px; */
 }
 
 .generateText {
